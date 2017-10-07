@@ -15,19 +15,22 @@ def lambda_handler(event, context):
 
     """ Uncomment this if statement and populate with your skill's application ID to prevent someone else from configuring a skill that sends requests to this function.
     """
-    if (event['session']['application']['applicationId'] !=
-            "unique-value-here"):
+    if (event['session']['application']['applicationId'] != "amzn1.ask.skill.10d00c0c-89cd-4f74-bf70-f65e2cc7e3db"):
         raise ValueError("Invalid Application ID")
 
     SKILL_INFO = {
         'name': "Simple Compliment",
-        'invocation': "simple compliment",
+        'invocation': "movie quotes",
         'responses': [
             "You are a smart cookie!",
             "I bet you make babies smile!",
             "You are doing terrific!",
             "You were cool before hipsters were cool!"
         ],
+        'quotes':[
+            { 'quote': 'Do you know what they call a quarter pounder in Holland?', 'answer': 'Pulp Fiction' },
+        ],
+
         'slot_name': "Person",
         'slot_responses': [
             "Hey {}, is that your picture next to charming in the dictionary!",
@@ -38,6 +41,8 @@ def lambda_handler(event, context):
     }
 
     INTENTS = {
+        "SkillGuessIntent": get_guess_response,
+        "SkillQuoteIntent": get_quote_response,
         "SkillInfoIntent": get_info_response,
         "SkillMainIntent": get_main_response,
         "SkillSlotIntent": get_slot_response,
@@ -81,7 +86,7 @@ def on_intent(request, session, skill, intents):
 
     # Dispatch to your skill's intent handlers
     if intent_name in intents:
-        return intents[intent_name](skill, request)
+        return intents[intent_name](skill, request, session)
     else:
         raise ValueError("Invalid intent")
 
@@ -109,7 +114,7 @@ def get_welcome_response(skill):
         card_title, speech_output, reprompt_text, should_end_session))
 
 
-def get_info_response(skill, request):
+def get_info_response(skill, request, session):
     session_attributes = {}
     card_title = "{} Info".format(skill['name'])
     speech_output = "{} is designed to brighten your day by giving you or your friends a compliment. If you would like examples of what this skill can do, ask for help now.".format(skill['name'], skill['name'])
@@ -119,7 +124,7 @@ def get_info_response(skill, request):
     return build_response(session_attributes, build_speechlet_response(card_title,speech_output,reprompt_text,should_end_session))
 
 
-def get_help_response(skill, request):
+def get_help_response(skill, request, session):
     session_attributes = {}
     card_title = "Help"
     speech_output = "To use the {} skill, try saying... give me a compliment..., or give Jon a compliment. For information about this skill, then say... what is {}".format(skill['name'], skill['invocation'])
@@ -129,7 +134,7 @@ def get_help_response(skill, request):
     return build_response(session_attributes, build_speechlet_response(card_title,speech_output,reprompt_text,should_end_session))
 
 
-def handle_session_end_request(skill, request):
+def handle_session_end_request(skill, request, session):
     card_title = "{} Ended".format(skill['name'])
     should_end_session = True
     speech_output = "Thank you for using the {} skill!".format(skill['name'])
@@ -138,7 +143,7 @@ def handle_session_end_request(skill, request):
         card_title, speech_output, None, should_end_session))
 
 
-def get_main_response(skill, request):
+def get_main_response(skill, request, session):
     session_attributes = {}
     card_title = "{}".format(skill['name'])
     should_end_session = True
@@ -151,8 +156,42 @@ def get_main_response(skill, request):
     reprompt_text = speech_output
 
     return build_response(session_attributes, build_speechlet_response(card_title,speech_output,reprompt_text,should_end_session))
+def get_quote_response(skill, request, session):
+    session_attributes = {}
+    card_title = "{}".format(skill['name'])
+    should_end_session = False
 
-def get_slot_response(skill, request):
+    quotes = skill['quotes']
+    random_index = random.randint(0, len(quotes) -1)
+    # random_key = random_index
+    response = quotes[random_index]['quote']
+    answer = quotes[random_index]['answer']
+    session_attributes['answer'] = answer
+
+    speech_output = response
+    reprompt_text = speech_output
+
+    return build_response(session_attributes, build_speechlet_response(card_title,speech_output,reprompt_text,should_end_session))
+
+def get_guess_response(skill, request, session):
+    session_attributes = {}
+    card_title = "{}".format(skill['name'])
+    should_end_session = False
+
+    guess = request["intent"]["slots"]['guess']['value']
+    # random_index = random.randint(0, len(guess) -1)
+    # random_key = random_index
+    # response = guess[random_index]['guess']
+    # answer = guess[random_index]['answer']
+    # session_attributes['answer'] = answer
+    return session['answer'] == guess
+
+    speech_output = response
+    reprompt_text = speech_output
+
+    return build_response(session_attributes, build_speechlet_response(card_title,speech_output,reprompt_text,should_end_session))
+
+def get_slot_response(skill, request, session):
     session_attributes = {}
     card_title = "{}".format(skill['name'])
     should_end_session = True

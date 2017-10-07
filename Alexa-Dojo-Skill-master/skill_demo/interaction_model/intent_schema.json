@@ -3,6 +3,15 @@
     {"intent": "SkillInfoIntent"},
     {"intent": "SkillMainIntent"},
     {
+      "intent": "SkillGuessIntent",
+      "slots": [
+        {
+          "name": "Movie",
+          "type": "AMAZON.US_FIRST_NAME"
+        }
+      ] 
+    },
+    {
       "intent": "SkillSlotIntent",
       "slots": [
         {

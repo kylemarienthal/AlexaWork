@@ -6,3 +6,6 @@ SkillMainIntent for a compliment
 SkillSlotIntent to give {Person} a compliment
 SkillSlotIntent give {Person} a compliment
 SkillSlotIntent to compliment {Person}
+
+SkillQuoteIntent give me a movie quote
+SkillQuoteIntent what is
