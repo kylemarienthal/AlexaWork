@@ -1,0 +1,8 @@
+SkillInfoIntent what is simple compliment
+SkillInfoIntent tell me about simple compliment
+SkillMainIntent to give me a compliment
+SkillMainIntent give me a compliment
+SkillMainIntent for a compliment
+SkillSlotIntent to give {Person} a compliment
+SkillSlotIntent give {Person} a compliment
+SkillSlotIntent to compliment {Person}
